@@ -5,8 +5,6 @@
 **/*mt.ipynb
 **/*mt
 .env
-<<<<<<< HEAD
 **data/movie.csv
-=======
-data/movie.csv
->>>>>>> 74475fe9e6a456030b1f140434375af1d34f9ef6
+
+
