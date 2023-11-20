@@ -6,5 +6,6 @@
 **/*mt
 .env
 **data/movies.csv
+**data/all_movies.csv
 
 
