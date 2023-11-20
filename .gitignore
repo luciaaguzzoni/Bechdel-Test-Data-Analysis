@@ -5,7 +5,7 @@
 **/*mt.ipynb
 **/*mt
 .env
-**data/movies.csv
+**data/kaggle/movies.csv
 **data/all_movies.csv
 
 
