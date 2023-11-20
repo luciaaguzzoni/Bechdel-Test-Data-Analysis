@@ -13,9 +13,9 @@ def get_update_btest_dataframe(update_path):
 
 
 
-def update_bechdel_df(kaggle_path, update_path):
+def update_bechdel_df(old_path, update_path):
 
-    btest_updated = pd.read_csv(kaggle_path, index_col=0)
+    btest_updated = pd.read_csv(old_path, index_col=0)
     btest = pd.read_csv(update_path, index_col=0)
 
 
@@ -38,17 +38,17 @@ def update_bechdel_df(kaggle_path, update_path):
             
             # every 10 movies, we save to a csv file, so that we wouldn't lose everything when there is an error
             if count % 10 == 0:
-                df_new.to_csv('../data/Bechdel_updated.csv')
+                df_new.to_csv(update_path,index=False)
             count += 1
         
         # reverse 
         df_new = df_new.iloc[::-1].reset_index(drop=True)
-        df_new.to_csv('../data/Bechdel_updated.csv',index=False)
+        df_new.to_csv(update_path,index=False)
 
         
         bechdel_df = pd.concat([btest,df_new],axis=0)
         bechdel_df.reset_index(inplace=True)
         bechdel_df.drop_duplicates()
-        bechdel_df.to_csv('../data/Bechdel.csv',index=False)
+        bechdel_df.to_csv(old_path,index=False)
 
         return df_new

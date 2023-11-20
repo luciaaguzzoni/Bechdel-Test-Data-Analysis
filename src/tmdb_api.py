@@ -15,8 +15,9 @@ tmdb_access_token = os.getenv("tmdb_access_token")
 
 
 
-# change imdbit in the format ddddddd
+
 def get_id(dep_id):
+# change imdbit in the format ddddddd
     try:
         dep_id = str(int(dep_id))
         l = len(dep_id)
@@ -27,13 +28,14 @@ def get_id(dep_id):
 
 
 def get_ids(id_list):
+#applies function get_id to all elements of id_list
     for i in range(len(id_list)):
         id_list[i] = get_id(id_list[i])
     return id_list
 
 
 
-def get_movie_info(imdbid_list):
+def get_movie_info(imdbid_list,update_path):
     headers = {
         "accept": "application/json",
         "Authorization": f"Bearer {tmdb_access_token}"
@@ -74,17 +76,118 @@ def get_movie_info(imdbid_list):
         new_movie_list.append(movie_dict)
         
         if cont%20==0:
-            pd.DataFrame(new_movie_list).to_csv("../data/new_movies.csv",index=False)
+            pd.DataFrame(new_movie_list).to_csv("update_path",index=False)
         cont+=1
         
     new_movies_df = pd.DataFrame(new_movie_list)
-    new_movies_df.to_csv("../data/new_movies.csv",index=False)
+    new_movies_df.to_csv("update_path",index=False)
 
     return new_movies_df
 
 
 
 
+## CLEANING
+def clean_prodcompanies(df):
+    for index, movie in df.iterrows():
+        companies = eval(movie['production_companies'])
+        companies_list = []
+
+        for company in companies:
+            company_name = company['name']
+            companies_list.append(company_name)
+
+        df.at[index, 'production_companies'] = companies_list
+    return df
+
+
+def change_dateformat(df):      
+    for index, movie in df.iterrows():
+        date = datetime.strptime(movie['release_date'], '%Y-%m-%d')
+        reformatted_date = date.strftime('%d/%m/%Y')
+
+        df.at[index, 'release_date'] = reformatted_date
+    return df
+
+
+def clean_cast(df):
+    df['cast_gender'] = pd.NA
+
+    for index, movie in df.iterrows():
+        cast = eval(movie['cast'])
+        gender_list = []
+
+        for cast_member in cast:
+            gender = cast_member['gender']
+            gender_list.append(gender)
+
+        df.at[index, 'cast_gender'] = gender_list
+    return df
+
+
+def clean_crew(df):
+    for index, movie in df.iterrows():
+        crew = eval(movie['crew'])
+        gender_list = []
+
+        for crew_member in crew:
+            gender = crew_member['gender']
+            gender_list.append(gender)
+
+        df.at[index, 'crew_gender'] = gender_list
+    return df
+
+
+def fem_columns(df):
+    df['cast_female_representation'] = pd.NA
+    df['crew_female_representation'] = pd.NA
+
+
+    for index, movie in df.iterrows():
+        if len(movie['cast_gender']) != 0:
+            df.at[index, 'cast_female_representation'] = 100*(movie['cast_gender'].count(1)/len(movie['cast_gender']))
+
+        if len(movie['crew_gender']) != 0:
+            df.at[index, 'crew_female_representation'] = 100*(movie['crew_gender'].count(1)/len(movie['crew_gender']))
+
+
+    df = df.dropna().copy()
+    df['cast_female_representation'] = df['cast_female_representation'].astype('float64')
+    df['crew_female_representation'] = df['crew_female_representation'].astype('float64')
+    return df
+
+
+def clean_merge(left_df, new_df):
+    new_df.dropna(inplace=True)
+    new_df.reset_index(drop=True,inplace=True)
+
+    df = pd.merge(left_df, new_df, left_on='imdbid', right_on='imdbid', how='inner')
+    df.drop(columns=["id","submitterid","date","visible"], inplace=True)
+
+    df = clean_prodcompanies(df)
+    df = change_dateformat(df)
+    df = clean_cast(df)
+    df = clean_crew(df)
+    df = fem_columns(df)
+
+    df.drop(columns=["cast","crew"],inplace=True)
+    return df
+
+
+
+
+
+
+
+
+
+def get_all_movies(df_old,df_new,path):
+    all_movies = pd.concat([df_old,df_new], axis=0)
+    all_movies.dropna(how='all',inplace=True)
+    all_movies.drop_duplicates(subset="imdbid", inplace=True)
+    all_movies.reset_index(drop=True, inplace=True)
+    all_movies.to_csv(path,index=False)
+    return all_movies
 
 
 

@@ -19,7 +19,7 @@ new_movies_path = "data/new_movies.csv"
 
 imdbid_list = tmdb.get_ids(list(update_bechdel_df["imdbid"]))
 
-new_movies_df = tmdb.get_movie_info(imdbid_list)
+new_movies_df = tmdb.get_movie_info(imdbid_list,new_movies_path)
 
 # clean new_movies
 new_movies_df = tmdb.clean_merge(update_bechdel_df,new_movies_df)
