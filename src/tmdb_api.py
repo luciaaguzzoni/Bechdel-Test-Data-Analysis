@@ -15,9 +15,10 @@ tmdb_access_token = os.getenv("tmdb_access_token")
 
 
 
+## ids transformation
 
 def get_id(dep_id):
-# change imdbit in the format ddddddd
+# change imdbit in the format ddddddd: ex 542 -> 0000542
     try:
         dep_id = str(int(dep_id))
         l = len(dep_id)
@@ -25,7 +26,6 @@ def get_id(dep_id):
         return new_id
     except:
         pass
-
 
 def get_ids(id_list):
 #applies function get_id to all elements of id_list
@@ -35,15 +35,19 @@ def get_ids(id_list):
 
 
 
+
+
+## TMDB API call function
+
 def get_movie_info(imdbid_list,update_path):
     headers = {
         "accept": "application/json",
         "Authorization": f"Bearer {tmdb_access_token}"
     }
     
-    new_movie_list = []
-    cont=0
+    new_movie_list = [] # list of dictionaries to create the movies dataframe
     
+    cont=0   
     for imbdid in imdbid_list:
         movie_dict={}
         time.sleep(1)
@@ -75,20 +79,25 @@ def get_movie_info(imdbid_list,update_path):
         
         new_movie_list.append(movie_dict)
         
+        # every 20 movies, we save to a csv file, so that we won't lose information in case of loop interruction
         if cont%20==0:
             pd.DataFrame(new_movie_list).to_csv("update_path",index=False)
         cont+=1
-        
-    new_movies_df = pd.DataFrame(new_movie_list)
-    new_movies_df.to_csv("update_path",index=False)
+
+
+    new_movies_df = pd.DataFrame(new_movie_list) # creating dataframe
+    new_movies_df.to_csv("update_path",index=False) # saving dataframe
 
     return new_movies_df
 
 
 
 
+
 ## CLEANING
+
 def clean_prodcompanies(df):
+    # changes types of column 'production_companies' as a list of strings
     for index, movie in df.iterrows():
         companies = eval(movie['production_companies'])
         companies_list = []
@@ -101,7 +110,8 @@ def clean_prodcompanies(df):
     return df
 
 
-def change_dateformat(df):      
+def change_dateformat(df): 
+    # changes date format from Y-m-d to d-m-Y  
     for index, movie in df.iterrows():
         date = datetime.strptime(movie['release_date'], '%Y-%m-%d')
         reformatted_date = date.strftime('%d/%m/%Y')
@@ -111,6 +121,9 @@ def change_dateformat(df):
 
 
 def clean_cast(df):
+    # insert new column 'cast_gender'
+    # for each rows create a list of ints, each element of the list represent the gender of a member of the cast
+    # 0: Not specified, 1: Female, 2: Male, 3: Non-binary
     df['cast_gender'] = pd.NA
 
     for index, movie in df.iterrows():
@@ -126,6 +139,10 @@ def clean_cast(df):
 
 
 def clean_crew(df):
+    # insert new column 'crew_gender'
+    # for each rows create a list of ints, each element of the list represent the gender of a member of the crew
+    # 0: Not specified, 1: Female, 2: Male, 3: Non-binary
+    df['cast_gender'] = pd.NA
     for index, movie in df.iterrows():
         crew = eval(movie['crew'])
         gender_list = []
@@ -139,6 +156,7 @@ def clean_crew(df):
 
 
 def fem_columns(df):
+    # create two columns for female representation resp between cast members and crew members
     df['cast_female_representation'] = pd.NA
     df['crew_female_representation'] = pd.NA
 
@@ -156,6 +174,12 @@ def fem_columns(df):
     df['crew_female_representation'] = df['crew_female_representation'].astype('float64')
     return df
 
+
+
+
+
+
+## Merge with bechdel dataframe (contains bt_scores)
 
 def clean_merge(left_df, new_df):
     new_df.dropna(inplace=True)
@@ -177,9 +201,7 @@ def clean_merge(left_df, new_df):
 
 
 
-
-
-
+## Concatenate with the previous dataframe
 
 def get_all_movies(df_old,df_new,path):
     all_movies = pd.concat([df_old,df_new], axis=0)
