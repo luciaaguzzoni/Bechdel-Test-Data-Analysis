@@ -48,9 +48,21 @@ The dataset was updated with most recent movies added on [bechdeltest.com](https
 
 ### 1. Percentage of movies for each Bechdel-Test score
 
+<img src=https://github.com/luciaaguzzoni/project-IV/blob/main/figures/1.1.png />
+
+<img src=https://github.com/luciaaguzzoni/project-IV/blob/main/figures/1.2.png />
+
 ### 2. Comparing production companies 
 
+<img src=https://github.com/luciaaguzzoni/project-IV/blob/main/figures/2.1.png />
+
+<img src=https://github.com/luciaaguzzoni/project-IV/blob/main/figures/2.2.png />
+
+<img src=https://github.com/luciaaguzzoni/project-IV/blob/main/figures/3.1.png />
+
 ### 3. Bechdel-Test score for most successful movies
+
+<img src=https://github.com/luciaaguzzoni/project-IV/blob/main/figures/4.png />
 
 
 
