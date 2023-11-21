@@ -69,7 +69,7 @@ Additional data considered in the analysis includes the average budget allocated
 
 <img src=https://github.com/luciaaguzzoni/project-IV/blob/main/figures/3.1.png />
 
-The average budget for movies with a Bechdel Score of 3 surpasses that of generic films only in the cases of 'Walt Disney,' 'Dreamworks,' and '20th Century
+The average budget for movies with a Bechdel Score of 3 surpasses that of generic films only in the cases of 'Walt Disney,' 'Dreamworks,' and '20th Century'.
 
 ### 3. Bechdel-Test score for most successful movies
 
@@ -77,7 +77,7 @@ Lastly, an examination was conducted to compare the success of movies across dif
 
 <img src=https://github.com/luciaaguzzoni/project-IV/blob/main/figures/4.png />
 
-It appears that films with a Bechdel Score of 1 tend to be the most popular, followed by those with scores of 3 and 2, while those with a Bechdel score of 0 are less popular. <br>
+It appears that films with a Bechdel Score of 1 tend to be the most popular, followed by those with scores of 2 and 3, while those with a Bechdel score of 0 are less popular. <br>
 However, it's important to note that this trend may be influenced by the fact that the movies with a Bechdel Score of 1 in the dataset also had the highest budgets. This suggests that the success of these movies may be more attributable to their budget rather than the representation of female characters.
 
 
